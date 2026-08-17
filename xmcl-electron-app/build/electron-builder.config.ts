@@ -85,16 +85,31 @@ export const config = {
     publisherName: 'XMCLF',
     icon: 'icons/dark.ico',
     electronLanguages: ['en-US'],
+    // `appx` is deliberately gone: it needs a code-signing certificate and a
+    // Microsoft Store publisher identity, and an unsigned one cannot be
+    // installed at all. `nsis` gives an .exe anyone can run; `zip` stays as
+    // the portable, no-install option.
     target: [
-      {
-        target: 'zip',
-        arch: [
-          'x64',
-          'ia32',
-        ],
-      },
-      'appx',
+      { target: 'nsis', arch: ['x64'] },
+      { target: 'zip', arch: ['x64'] },
     ],
+  },
+  nsis: {
+    // A launcher is something people want on a specific disk, so let them
+    // choose rather than forcing %LOCALAPPDATA%.
+    oneClick: false,
+    allowToChangeInstallationDirectory: true,
+    // Per-user install: no UAC prompt, and no need for an admin account.
+    perMachine: false,
+    installerIcon: 'icons/dark.ico',
+    uninstallerIcon: 'icons/dark.ico',
+    installerHeaderIcon: 'icons/dark.ico',
+    shortcutName: 'XMCLF',
+    createDesktopShortcut: true,
+    createStartMenuShortcut: true,
+    deleteAppDataOnUninstall: false,
+    installerLanguages: ['en_US', 'ru_RU'],
+    artifactName: 'xmclf-${version}-win-${arch}-setup.${ext}',
   },
   linux: {
     executableName: 'xmclf',

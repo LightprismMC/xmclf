@@ -1,0 +1,72 @@
+name: Release
+
+# Push a tag to cut a release:
+#
+#   git tag v1.0.0 && git push origin v1.0.0
+#
+# `workflow_dispatch` builds the artifacts without publishing anything, which
+# is the way to check a build before tagging.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v6
+      - name: Use Node.js 22
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build renderer
+        run: pnpm build:renderer
+        env:
+          NODE_ENV: production
+          # Optional. Without it the launcher runs fine but CurseForge browsing
+          # stays empty -- add a CURSEFORGE_API_KEY repository secret to enable it.
+          CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
+
+      # Produces build/output/xmclf-<version>-win-x64-setup.exe and a portable
+      # zip. This step is why releases are built here rather than locally:
+      # electron-builder unpacks a toolchain containing macOS symlinks, and
+      # Windows refuses to create those without Developer Mode or elevation.
+      # The runner allows it.
+      - name: Build installer
+        run: pnpm build:all
+        env:
+          NODE_ENV: production
+          BUILD_NUMBER: ${{ github.run_number }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: xmclf-windows
+          path: |
+            xmcl-electron-app/build/output/*.exe
+            xmcl-electron-app/build/output/*.zip
+            xmcl-electron-app/build/output/*.sha256
+          if-no-files-found: error
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "XMCLF ${GITHUB_REF_NAME}" \
+            --generate-notes \
+            xmcl-electron-app/build/output/*.exe \
+            xmcl-electron-app/build/output/*.zip \
+            xmcl-electron-app/build/output/*.sha256
