@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XMCLF — лаунчер Minecraft с оффлайн-аккаунтами и Ely.by</title>
+  <meta name="description"
+    content="XMCLF (X Minecraft Launcher Freedoom) — лаунчер Minecraft с открытым исходным кодом, в котором оффлайн-аккаунты и Ely.by доступны всегда, с поддержкой двухфакторного входа.">
+  <meta name="theme-color" content="#101612">
+  <link rel="icon" href="../assets/favicon.ico" sizes="any">
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="../assets/logo.png">
+  <link rel="alternate" hreflang="en" href="../">
+  <link rel="alternate" hreflang="ru" href="./">
+  <link rel="stylesheet" href="../styles.css">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="XMCLF — лаунчер Minecraft с оффлайн-аккаунтами и Ely.by">
+  <meta property="og:description"
+    content="Оффлайн-аккаунты и Ely.by — без ограничений. Форк X Minecraft Launcher с открытым кодом.">
+  <meta property="og:image" content="../assets/logo.png">
+</head>
+
+<body>
+  <a class="skip" href="#main">Перейти к содержимому</a>
+
+  <header class="site-header">
+    <div class="shell site-header__inner">
+      <a class="wordmark" href="./">
+        <img src="../assets/logo.png" alt="" width="28" height="28">
+        XMCLF
+      </a>
+      <nav class="site-nav" aria-label="Основная навигация">
+        <a href="#features">Возможности</a>
+        <a href="#download">Скачать</a>
+        <a class="site-nav__hide-sm" href="https://github.com/LightprismMC/xmclf">GitHub</a>
+        <span class="lang">
+          <a href="../" lang="en">EN</a>
+          <a href="./" aria-current="true" lang="ru">RU</a>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="shell hero__grid">
+        <div>
+          <p class="eyebrow">Лаунчер Minecraft с открытым кодом</p>
+          <h1 class="hero__name">XMCLF</h1>
+          <p class="hero__tagline">Оффлайн и Ely.by — без ограничений.</p>
+          <p class="hero__lede">
+            X Minecraft Launcher Freedoom — форк X Minecraft Launcher. Он сохраняет всё, что оригинал делает
+            хорошо: сборки на Forge, Fabric, Quilt и NeoForge, моды и модпаки с CurseForge и Modrinth,
+            установку Java. И снимает замки с экрана входа.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#download">
+              Скачать для Windows
+              <span class="btn__sub">1.0.0 · 96 МБ</span>
+            </a>
+            <a class="btn btn--ghost" href="https://github.com/LightprismMC/xmclf">Исходный код</a>
+          </div>
+        </div>
+        <img class="hero__mark" src="../assets/logo.png" alt="Логотип XMCLF" width="320" height="320">
+      </div>
+    </section>
+
+    <div class="shell">
+      <div class="proof">
+        <div class="proof__item">
+          <div class="proof__value">1.0.0</div>
+          <div class="proof__label">Версия</div>
+        </div>
+        <div class="proof__item">
+          <div class="proof__value">MIT</div>
+          <div class="proof__label">Лицензия</div>
+        </div>
+        <div class="proof__item">
+          <div class="proof__value">XMCL 0.66.2</div>
+          <div class="proof__label">Основан на</div>
+        </div>
+        <div class="proof__item">
+          <div class="proof__value">Windows x64</div>
+          <div class="proof__label">Платформа</div>
+        </div>
+      </div>
+    </div>
+
+    <section class="section" id="features">
+      <div class="shell">
+        <p class="eyebrow">Чем отличается</p>
+        <h2 class="section__title">Пять изменений, и все — про аккаунты.</h2>
+        <p class="section__lede">
+          Остальное — код апстрима без правок. Ради этих пяти пунктов форк и существует.
+        </p>
+
+        <div class="features">
+          <article class="feature">
+            <div class="feature__index">01</div>
+            <div>
+              <h3 class="feature__title">Оффлайн-аккаунты доступны всегда</h3>
+              <p class="feature__body">
+                Оригинал скрывает оффлайн-режим и все сторонние сервисы для ряда локалей, пока не войдёшь
+                через Microsoft или не включишь режим разработчика. Эта проверка убрана. Выбираете ник, при
+                желании задаёте UUID — и играете.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature__index">02</div>
+            <div>
+              <h3 class="feature__title">Ely.by с двухфакторной защитой</h3>
+              <p class="feature__body">
+                В протоколе Yggdrasil нет поля для одноразового кода — его дописывают к паролю через
+                двоеточие. Раньше ответ Ely.by о защищённом аккаунте показывался сырой ошибкой, с которой
+                нельзя было ничего сделать. XMCLF её распознаёт, спрашивает код и подставляет сам — а пароль
+                с двоеточием внутри за код уже не примут.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature__index">03</div>
+            <div>
+              <h3 class="feature__title">Встроенные сервисы переживают плохую сеть</h3>
+              <p class="feature__body">
+                Ely.by и LittleSkin несут зашитые метаданные и кэшируются на диск при первом запуске.
+                Раньше, если их API при старте был недоступен, в списке оставался голый адрес хоста без
+                ссылки на регистрацию — или не оставалось ничего.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature__index">04</div>
+            <div>
+              <h3 class="feature__title">Не обновится в чужой лаунчер</h3>
+              <p class="feature__body">
+                Автообновление отключено. Обновлятор апстрима берёт релизы из оригинального проекта, так что
+                форк, оставивший его включённым, тихо заменил бы себя на X Minecraft Launcher. Здесь
+                обновления ставятся руками — и это осознанно.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature__index">05</div>
+            <div>
+              <h3 class="feature__title">Своя папка данных</h3>
+              <p class="feature__body">
+                XMCLF хранит сборки, аккаунты и ресурсы в <code>%APPDATA%\xmclf</code>, отдельно от папки
+                <code>xmcl</code> оригинала. Оба лаунчера можно держать одновременно — они не делят папку и
+                не спорят за файл блокировки.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download">
+      <div class="shell">
+        <p class="eyebrow">Загрузка</p>
+        <h2 class="section__title">Готов, когда готовы вы.</h2>
+        <p class="section__lede">
+          Windows x64. Сборки делает GitHub Actions из исходников по тегу — то, что вы ставите,
+          соответствует тому, что лежит в репозитории.
+        </p>
+
+        <div class="downloads">
+          <article class="download-card download-card--primary">
+            <div class="download-card__kind">Рекомендуем</div>
+            <h3 class="download-card__title">Установщик</h3>
+            <p class="download-card__body">
+              Ставится только для вашего пользователя, поэтому прав администратора не спросит. Папку
+              выбираете сами, ярлыки создаются на рабочем столе и в меню «Пуск».
+            </p>
+            <a class="btn btn--primary"
+              href="https://github.com/LightprismMC/xmclf/releases/download/v1.0.0/xmclf-1.0.0-win-x64-setup.exe">
+              Скачать .exe
+              <span class="btn__sub">96 МБ</span>
+            </a>
+          </article>
+
+          <article class="download-card">
+            <div class="download-card__kind">Портативная</div>
+            <h3 class="download-card__title">Zip-архив</h3>
+            <p class="download-card__body">
+              Ничего не устанавливается. Распакуйте куда угодно — подойдёт и флешка — и запустите
+              <code>XMCLF.exe</code>.
+            </p>
+            <a class="btn btn--ghost"
+              href="https://github.com/LightprismMC/xmclf/releases/download/v1.0.0/xmclf-1.0.0-win32-x64.zip">
+              Скачать .zip
+              <span class="btn__sub">129 МБ</span>
+            </a>
+          </article>
+        </div>
+
+        <div class="notice">
+          <h3>Windows предупредит при первом запуске</h3>
+          <p>
+            Сборка не подписана сертификатом, поэтому SmartScreen покажет «Windows защитила ваш компьютер».
+            Нажмите <strong>Подробнее</strong>, затем <strong>Выполнить в любом случае</strong>. Подпись
+            требует сертификата за несколько сотен долларов в год; пока его нет, это предупреждение
+            неизбежно для любого небольшого проекта.
+          </p>
+          <p>
+            Вместо доверия к подписи проверьте файл сами. Выполните в PowerShell
+            <code>Get-FileHash xmclf-1.0.0-win-x64-setup.exe</code> и сравните с
+            <code>5478edf34686d84ab257afd8a9b9ea1778ae4ad8f1459c12a0deb3e5c364a5b7</code> или с файлом
+            <code>.sha256</code>, приложенным к
+            <a class="link-accent" href="https://github.com/LightprismMC/xmclf/releases/latest">релизу</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <p class="eyebrow">Открытый код</p>
+        <h2 class="section__title">Построен на чужой хорошей работе.</h2>
+        <p class="section__lede">
+          XMCLF существует потому, что
+          <a class="link-accent" href="https://xmcl.app">X Minecraft Launcher</a> — действительно хороший
+          лаунчер, выпущенный под лицензией, которая разрешает форки. Заслуга почти каждой его строки
+          принадлежит апстриму.
+        </p>
+
+        <div class="credit__grid">
+          <div class="credit__card">
+            <h3>Лицензия MIT</h3>
+            <p>
+              Унаследована от апстрима, авторские права ci010 сохранены. Вы вправе форкнуть и это.
+            </p>
+          </div>
+          <div class="credit__card">
+            <h3>Проверяемая история</h3>
+            <p>
+              Первый коммит — нетронутый апстрим 0.66.2. Каждое изменение после него — отдельный читаемый
+              коммит, видно ровно то, что было затронуто.
+            </p>
+          </div>
+          <div class="credit__card">
+            <h3>Поддержите оригинал</h3>
+            <p>
+              Если лаунчер вам полезен, благодарить стоит
+              <a class="link-accent" href="https://github.com/voxelum/x-minecraft-launcher">проект
+                апстрима</a> и его контрибьюторов.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div>XMCLF · X Minecraft Launcher Freedoom · MIT</div>
+      <nav class="site-footer__links" aria-label="Ссылки в подвале">
+        <a href="https://github.com/LightprismMC/xmclf">Репозиторий</a>
+        <a href="https://github.com/LightprismMC/xmclf/releases">Релизы</a>
+        <a href="https://github.com/LightprismMC/xmclf/issues">Обсуждения</a>
+        <a href="https://xmcl.app">Апстрим</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+
+</html>

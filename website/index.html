@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XMCLF — a Minecraft launcher with offline and Ely.by accounts</title>
+  <meta name="description"
+    content="XMCLF (X Minecraft Launcher Freedoom) is an open source Minecraft launcher where offline and Ely.by accounts are always available, with two-factor login supported.">
+  <meta name="theme-color" content="#101612">
+  <link rel="icon" href="assets/favicon.ico" sizes="any">
+  <link rel="icon" href="assets/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <link rel="alternate" hreflang="en" href="./">
+  <link rel="alternate" hreflang="ru" href="ru/">
+  <link rel="stylesheet" href="styles.css">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="XMCLF — a Minecraft launcher with offline and Ely.by accounts">
+  <meta property="og:description"
+    content="Offline and Ely.by accounts, never gated. An open source fork of X Minecraft Launcher.">
+  <meta property="og:image" content="assets/logo.png">
+</head>
+
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="shell site-header__inner">
+      <a class="wordmark" href="./">
+        <img src="assets/logo.png" alt="" width="28" height="28">
+        XMCLF
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="#features">Features</a>
+        <a href="#download">Download</a>
+        <a class="site-nav__hide-sm" href="https://github.com/LightprismMC/xmclf">GitHub</a>
+        <span class="lang">
+          <a href="./" aria-current="true" lang="en">EN</a>
+          <a href="ru/" lang="ru">RU</a>
+        </span>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="shell hero__grid">
+        <div>
+          <p class="eyebrow">Open source Minecraft launcher</p>
+          <h1 class="hero__name">XMCLF</h1>
+          <p class="hero__tagline">Offline and Ely.by accounts, never gated.</p>
+          <p class="hero__lede">
+            X Minecraft Launcher Freedoom is a fork of X Minecraft Launcher. It keeps everything the
+            original does well — instances across Forge, Fabric, Quilt and NeoForge, mods and modpacks
+            from CurseForge and Modrinth, managed Java — and takes the locks off the account screen.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#download">
+              Download for Windows
+              <span class="btn__sub">1.0.0 · 96 MB</span>
+            </a>
+            <a class="btn btn--ghost" href="https://github.com/LightprismMC/xmclf">Source on GitHub</a>
+          </div>
+        </div>
+        <img class="hero__mark" src="assets/logo.png" alt="XMCLF logo" width="320" height="320">
+      </div>
+    </section>
+
+    <div class="shell">
+      <div class="proof">
+        <div class="proof__item">
+          <div class="proof__value">1.0.0</div>
+          <div class="proof__label">Current release</div>
+        </div>
+        <div class="proof__item">
+          <div class="proof__value">MIT</div>
+          <div class="proof__label">Licence</div>
+        </div>
+        <div class="proof__item">
+          <div class="proof__value">XMCL 0.66.2</div>
+          <div class="proof__label">Built on</div>
+        </div>
+        <div class="proof__item">
+          <div class="proof__value">Windows x64</div>
+          <div class="proof__label">Platform</div>
+        </div>
+      </div>
+    </div>
+
+    <section class="section" id="features">
+      <div class="shell">
+        <p class="eyebrow">What is different</p>
+        <h2 class="section__title">Five changes, all of them about accounts.</h2>
+        <p class="section__lede">
+          The rest of the launcher is upstream code, untouched. These are the reasons this fork exists.
+        </p>
+
+        <div class="features">
+          <article class="feature">
+            <div class="feature__index">01</div>
+            <div>
+              <h3 class="feature__title">Offline accounts are always available</h3>
+              <p class="feature__body">
+                Upstream hides offline mode and every third-party service for a list of locales until you
+                sign in with Microsoft or switch on developer mode. That check is gone. Pick a username,
+                optionally pin a UUID, and play.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature__index">02</div>
+            <div>
+              <h3 class="feature__title">Ely.by, two-factor included</h3>
+              <p class="feature__body">
+                Yggdrasil has no field for a one-time code, so services expect it appended to the password
+                after a colon. Upstream surfaced Ely.by's "account protected with two factor auth" as a raw
+                error you could not act on. XMCLF recognises it, asks for the code, and joins the two itself
+                — a password containing a colon is never mistaken for a code.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature__index">03</div>
+            <div>
+              <h3 class="feature__title">Built-in services survive a bad network</h3>
+              <p class="feature__body">
+                Ely.by and LittleSkin ship with their metadata baked in and are cached to disk on first run.
+                Before, a launch that could not reach their API left the account picker showing a bare
+                hostname with no register link — or nothing at all.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature__index">04</div>
+            <div>
+              <h3 class="feature__title">It will not update itself into something else</h3>
+              <p class="feature__body">
+                Auto update is off. Upstream's updater resolves releases from the original project, so a
+                fork that kept it would quietly replace itself with X Minecraft Launcher. Releases here are
+                installed by hand, on purpose.
+              </p>
+            </div>
+          </article>
+
+          <article class="feature">
+            <div class="feature__index">05</div>
+            <div>
+              <h3 class="feature__title">Its own data directory</h3>
+              <p class="feature__body">
+                XMCLF stores instances, accounts and assets in <code>%APPDATA%\xmclf</code>, separate from
+                upstream's <code>xmcl</code>. Both launchers can be installed side by side without sharing
+                a folder or fighting over a lock file.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="download">
+      <div class="shell">
+        <p class="eyebrow">Download</p>
+        <h2 class="section__title">Ready when you are.</h2>
+        <p class="section__lede">
+          Windows x64. Builds are produced by GitHub Actions from the tagged source, so what you install is
+          what the repository says it is.
+        </p>
+
+        <div class="downloads">
+          <article class="download-card download-card--primary">
+            <div class="download-card__kind">Recommended</div>
+            <h3 class="download-card__title">Installer</h3>
+            <p class="download-card__body">
+              Installs for your user only, so there is no administrator prompt. You choose the folder, and
+              it creates desktop and Start menu shortcuts.
+            </p>
+            <a class="btn btn--primary"
+              href="https://github.com/LightprismMC/xmclf/releases/download/v1.0.0/xmclf-1.0.0-win-x64-setup.exe">
+              Download .exe
+              <span class="btn__sub">96 MB</span>
+            </a>
+          </article>
+
+          <article class="download-card">
+            <div class="download-card__kind">Portable</div>
+            <h3 class="download-card__title">Zip archive</h3>
+            <p class="download-card__body">
+              Nothing is installed. Unpack it anywhere — a USB stick works — and run
+              <code>XMCLF.exe</code>.
+            </p>
+            <a class="btn btn--ghost"
+              href="https://github.com/LightprismMC/xmclf/releases/download/v1.0.0/xmclf-1.0.0-win32-x64.zip">
+              Download .zip
+              <span class="btn__sub">129 MB</span>
+            </a>
+          </article>
+        </div>
+
+        <div class="notice">
+          <h3>Windows will warn you on first run</h3>
+          <p>
+            The build is not code-signed, so SmartScreen shows “Windows protected your PC”. Choose
+            <strong>More info</strong>, then <strong>Run anyway</strong>. Signing needs a certificate that
+            costs a few hundred dollars a year; until there is one, that warning is unavoidable for any
+            small project.
+          </p>
+          <p>
+            Verify what you downloaded instead. Run
+            <code>Get-FileHash xmclf-1.0.0-win-x64-setup.exe</code> in PowerShell and compare it with
+            <code>5478edf34686d84ab257afd8a9b9ea1778ae4ad8f1459c12a0deb3e5c364a5b7</code>, or with the
+            <code>.sha256</code> file attached to
+            <a class="link-accent" href="https://github.com/LightprismMC/xmclf/releases/latest">the
+              release</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <p class="eyebrow">Open source</p>
+        <h2 class="section__title">Built on someone else's good work.</h2>
+        <p class="section__lede">
+          XMCLF exists because
+          <a class="link-accent" href="https://xmcl.app">X Minecraft Launcher</a> is a genuinely good
+          launcher released under a licence that allows forks. Credit for almost every line of it belongs
+          upstream.
+        </p>
+
+        <div class="credit__grid">
+          <div class="credit__card">
+            <h3>MIT licensed</h3>
+            <p>
+              Inherited from upstream, with ci010's copyright intact. You are free to fork this in turn.
+            </p>
+          </div>
+          <div class="credit__card">
+            <h3>An auditable diff</h3>
+            <p>
+              The first commit is upstream 0.66.2, unmodified. Every change after it is a separate,
+              readable commit — you can see exactly what was touched.
+            </p>
+          </div>
+          <div class="credit__card">
+            <h3>Support the original</h3>
+            <p>
+              If this launcher is useful to you, the people to thank are
+              <a class="link-accent" href="https://github.com/voxelum/x-minecraft-launcher">the upstream
+                project</a> and its contributors.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell site-footer__inner">
+      <div>XMCLF · X Minecraft Launcher Freedoom · MIT</div>
+      <nav class="site-footer__links" aria-label="Footer">
+        <a href="https://github.com/LightprismMC/xmclf">Repository</a>
+        <a href="https://github.com/LightprismMC/xmclf/releases">Releases</a>
+        <a href="https://github.com/LightprismMC/xmclf/issues">Issues</a>
+        <a href="https://xmcl.app">Upstream</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+
+</html>

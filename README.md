@@ -6,6 +6,11 @@
 
 <p align="center">X Minecraft Launcher Freedoom</p>
 
+<p align="center">
+  <a href="https://lightprismmc.github.io/xmclf/">Website</a> ·
+  <a href="https://github.com/LightprismMC/xmclf/releases/latest">Download</a>
+</p>
+
 A fork of [X Minecraft Launcher](https://xmcl.app) 0.66.2 that ships offline
 and [Ely.by](https://ely.by) accounts as ordinary, always-available login
 options.
