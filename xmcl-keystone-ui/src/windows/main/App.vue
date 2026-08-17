@@ -1,0 +1,253 @@
+<template>
+  <v-app v-if="!showSetup" class="h-full max-h-screen overflow-hidden select-none" :class="{ 'dark': isDark }">
+    <AppBackground />
+    <div class="w-full h-full absolute left-0 header-overlay" :style="{
+      height: headerHeight + 70 + 'px',
+      'background-image': `linear-gradient(${appBarColor} 0%, color-mix(in srgb, ${appBarColor}, transparent) 65%, transparent 100%)`
+    }">
+    </div>
+    <AppSystemBar :back="sidebarStyle === 'notch'" />
+    <div
+      class="app-layout flex-grow relative flex overflow-auto"
+      :class="layoutClasses"
+    >
+      <AppSideBarClassic v-if="sidebarStyle === 'classic'" />
+      <AppSideBarNotch v-else />
+      <main class="relative flex max-h-full flex-1 flex-col overflow-auto" :class="mainClasses">
+        <router-view v-slot="{ Component }">
+          <transition name="fade-transition" mode="out-in">
+            <component :is="Component" class="z-2" />
+          </transition>
+        </router-view>
+      </main>
+    </div>
+    <AppContextMenu />
+    <AppNotifier />
+    <AppOmniDialog :agent-enabled="developerMode" />
+    <AppFeedbackDialog />
+    <AppTaskDialog />
+    <AppAddInstanceDialog />
+    <AppModpackUpdateDialog />
+    <AppShareInstanceDialog />
+    <AppInstanceDeleteDialog />
+    <AppGameExitDialog />
+    <AppLaunchBlockedDialog />
+    <AppUnauthenticatedWarningDialog />
+    <AppMultiplayerLoginDialog />
+    <AppImageDialog />
+    <AppJoinServerDialog />
+    <AppSharedTooltip />
+    <AppInstallSkipDialog />
+    <AppMigrateWizardDialog />
+    <AppMinecraftFriendsDialog />
+    <UserProfileDialog :value="userProfileDialogShown" @input="userProfileDialogShown = $event" />
+    <AppModrinthLoginDialog />
+    <AppModrinthProjectCreateDialog />
+    <AppModrinthProjectBindDialog />
+    <AppModrinthVersionPublishDialog />
+    <AppSideBarGroupSettingDialog :default-color="defaultColor" />
+    <ModGroupSelectDialog />
+    <AppGamepadPrompt />
+  </v-app>
+  <v-app v-else class="h-full max-h-screen overflow-hidden" :class="{ 'dark': isDark }">
+    <AppSystemBar no-user no-task />
+    <div class="app-layout relative flex min-h-0 flex-1 overflow-hidden">
+      <Setup @ready="onReady" />
+    </div>
+    <UserProfileDialog :value="userProfileDialogShown" @input="userProfileDialogShown = $event" />
+    <AppFeedbackDialog />
+    <AppGamepadPrompt />
+  </v-app>
+</template>
+
+<script lang=ts setup>
+import '@/assets/common.css'
+import AppImageDialog from '@/components/AppImageDialog.vue'
+import AppSharedTooltip from '@/components/AppSharedTooltip.vue'
+import { useAuthProfileImportNotification } from '@/composables/authProfileImport'
+import { useAgentChatHotkey } from '@/composables/agentChat'
+import { kAgent, installAgentDevLauncher, useAgent } from '@/composables/agent'
+import { useCommandPaletteHotkey } from '@/composables/commandPalette'
+import { useDefaultErrorHandler } from '@/composables/errorHandler'
+import { kInstance } from '@/composables/instance'
+import { kLaunchButton, useLaunchButton } from '@/composables/launchButton'
+import { kLocalizedContent, useLocalizedContentControl } from '@/composables/localizedContent'
+import { useNotifier } from '@/composables/notifier'
+import { kCompact } from '@/composables/scrollTop'
+import { kSettingsState } from '@/composables/setting'
+import { kTheme } from '@/composables/theme'
+import { kTutorial } from '@/composables/tutorial'
+import { kInFocusMode } from '@/composables/uiLayout'
+import { kSidebarSettings, useInjectSidebarSettings, useSidebarSettings } from '@/composables/sidebarSettings'
+import { basename } from '@/util/basename'
+import { injection } from '@/util/inject'
+import AppAddInstanceDialog from '@/views/AppAddInstanceDialog.vue'
+import AppModpackUpdateDialog from '@/views/AppModpackUpdateDialog.vue'
+import AppBackground from '@/views/AppBackground.vue'
+import AppOmniDialog from '@/views/AppOmniDialog.vue'
+import AppContextMenu from '@/views/AppContextMenu.vue'
+import AppFeedbackDialog from '@/views/AppFeedbackDialog.vue'
+import AppGameExitDialog from '@/views/AppGameExitDialog.vue'
+import AppInstallSkipDialog from '@/views/AppInstallSkipDialog.vue'
+import AppInstanceDeleteDialog from '@/views/AppInstanceDeleteDialog.vue'
+import AppLaunchBlockedDialog from '@/views/AppLaunchBlockedDialog.vue'
+import AppMultiplayerLoginDialog from '@/views/AppMultiplayerLoginDialog.vue'
+import AppUnauthenticatedWarningDialog from '@/views/AppUnauthenticatedWarningDialog.vue'
+import AppJoinServerDialog from '@/views/AppJoinServerDialog.vue'
+import AppMigrateWizardDialog from '@/views/AppMigrateWizardDialog.vue'
+import AppMinecraftFriendsDialog from '@/views/AppMinecraftFriendsDialog.vue'
+import UserProfileDialog from '@/components/UserProfileDialog.vue'
+import AppModrinthLoginDialog from '@/views/AppModrinthLoginDialog.vue'
+import AppModrinthProjectCreateDialog from '@/views/AppModrinthProjectCreateDialog.vue'
+import AppModrinthProjectBindDialog from '@/views/AppModrinthProjectBindDialog.vue'
+import AppModrinthVersionPublishDialog from '@/views/AppModrinthVersionPublishDialog.vue'
+import AppNotifier from '@/views/AppNotifier.vue'
+import AppShareInstanceDialog from '@/views/AppShareInstanceDialog.vue'
+import AppSideBarClassic from '@/views/AppSideBarClassic.vue'
+import AppSideBarNotch from '@/views/AppSideBarNotch.vue'
+import AppSystemBar from '@/views/AppSystemBar.vue'
+import AppTaskDialog from '@/views/AppTaskDialog.vue'
+import Setup from '@/views/Setup.vue'
+import { useLocalStorage, useMediaQuery, usePreferredColorScheme, usePreferredDark } from '@vueuse/core'
+import { kInstanceLauncher, useInstanceLauncher } from '@/composables/instanceLauncher'
+import { kMinecraftFriends, useMinecraftFriendsImpl } from '@/composables/minecraftFriends'
+import { useUserMenuControl } from '@/composables/userMenu'
+import { UserSkinRenderPaused } from '@/composables/userSkin'
+import AppSideBarGroupSettingDialog from '@/views/AppSideBarGroupSettingDialog.vue'
+import ModGroupSelectDialog from '@/views/ModGroupSelectDialog.vue'
+import AppGamepadPrompt from '@/views/AppGamepadPrompt.vue'
+import { useInstanceGroupDefaultColor } from '@/composables/instanceGroup'
+import { kMultiplayerEntry, useMultiplayerEntry } from '@/composables/multiplayerEntry'
+
+const showSetup = ref(location.search.indexOf('bootstrap') !== -1)
+const { state } = injection(kSettingsState)
+const developerMode = computed(() => state.value?.developerMode ?? false)
+
+
+provide('streamerMode', useLocalStorage('streamerMode', false, { writeDefaults: false }))
+provide(kLocalizedContent, useLocalizedContentControl())
+provide(kInstanceLauncher, useInstanceLauncher())
+provide(kMinecraftFriends, useMinecraftFriendsImpl())
+
+// Agent must run in App.vue (not Context.ts) because its tool factory
+// injects kInstance/kInstanceMods/... which are provided by Context itself,
+// and `inject` only resolves on descendants.
+const agent = useAgent()
+provide(kAgent, agent)
+// The window.__xmcl_agent debug surface follows developer mode: the whole agent
+// feature is developer-mode gated, so it is never exposed to a default install.
+installAgentDevLauncher(agent, developerMode)
+
+// User profile dialog — moved from AppSystemBarUserMenu to App root
+const userMenu = useUserMenuControl()
+const userProfileDialogShown = userMenu.shown
+const route = useRoute()
+provide(UserSkinRenderPaused, computed(() => !userProfileDialogShown.value && route.path !== '/me'))
+
+// Bind Ctrl/Cmd+Shift+C to open the command palette.
+useCommandPaletteHotkey()
+// Bind Ctrl/Cmd+Shift+A to open the agent chat panel.
+useAgentChatHotkey(developerMode)
+
+const defaultColor = useInstanceGroupDefaultColor()
+
+const modes = useLocalStorage('instanceEnabledDashboard', {} as Record<string, boolean>)
+const { path } = injection(kInstance)
+const isLessThan490px = useMediaQuery('(max-height: 570px)')
+provide(kInFocusMode, computed({
+  get() {
+    const less = isLessThan490px.value
+    const isDashboard = modes.value[basename(path.value)]
+    if (isDashboard === undefined) {
+      return true // 'focus' is default
+    }
+    if (less) {
+      return false
+    }
+    return !isDashboard
+  },
+  set(inFocus) {
+    const isDashboard = !inFocus
+    modes.value = { ...modes.value, [basename(path.value)]: isDashboard }
+  },
+}))
+
+provide(kLaunchButton, useLaunchButton())
+provide(kMultiplayerEntry, useMultiplayerEntry())
+
+const sidebarSettings = useSidebarSettings()
+provide(kSidebarSettings, sidebarSettings)
+const sidebarPosition = computed(() => sidebarSettings.position.value)
+const sidebarStyle = computed(() => sidebarSettings.style.value)
+
+const layoutClasses = computed(() => ({
+  'flex-row': sidebarPosition.value === 'left' || sidebarPosition.value === 'right',
+  'flex-col': sidebarPosition.value === 'top' || sidebarPosition.value === 'bottom',
+  'flex-row-reverse': sidebarPosition.value === 'right',
+  'flex-col-reverse': sidebarPosition.value === 'bottom',
+}))
+
+const mainClasses = computed(() => ({
+  'inset-y-0': sidebarPosition.value === 'left' || sidebarPosition.value === 'right',
+  'inset-x-0': sidebarPosition.value === 'top' || sidebarPosition.value === 'bottom',
+}))
+
+const compact = ref(false)
+provide(kCompact, compact)
+
+const headerHeight = ref(0)
+provide('headerHeight', headerHeight)
+
+const { appBarColor, dark } = injection(kTheme)
+
+watch(dark, (newVal) => {
+  state.value?.themeSet(newVal === 'system' ? newVal : newVal ? 'dark' : 'light')
+}, { immediate: true })
+
+const tutor = injection(kTutorial)
+// Set theme and start tutorial
+const onReady = async (data: any) => {
+  await nextTick()
+  showSetup.value = false
+  await nextTick()
+  if (state.value) {
+    state.value.themeSet(data.theme)
+  } else {
+    const unwatch = watch(state, (state) => {
+      if (state) {
+        state.themeSet(data.theme)
+      }
+      unwatch()
+    })
+  }
+  tutor.start()
+}
+
+// color theme sync
+const { isDark } = injection(kTheme)
+
+// Notifier
+const { notify } = useNotifier()
+useDefaultErrorHandler(notify)
+useAuthProfileImportNotification(notify)
+</script>
+
+<style scoped>
+
+.clip-head {
+  clip-path: inset(0px 30px 30px 0px) !important;
+  width: 64px;
+  height: auto;
+  /*to preserve the aspect ratio of the image*/
+}
+
+.v-input__icon--prepend {
+  margin-right: 7px;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+</style>

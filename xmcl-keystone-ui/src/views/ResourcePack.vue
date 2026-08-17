@@ -1,0 +1,390 @@
+<template>
+  <MarketBase
+    :items="items"
+    :item-height="itemHeight"
+    :plans="plans"
+    :selection-mode="currentView === 'local' && selectionMode"
+    :class="{
+      dragover,
+    }"
+    :error="error"
+    :loading="loading"
+    @load="onLoad"
+    @update:selection-mode="onUpdateSelectionMode"
+  >
+    <template #actions>
+      <MarketListHeader
+        v-model:dense="denseView"
+        :label="`${originalItems.length} ${t('resourcepack.name', originalItems.length)}`"
+      >
+        <v-btn
+          v-if="currentView === 'local'"
+          :class="{ 'v-btn--active': selectionMode }"
+          icon
+          variant="text"
+          density="comfortable"
+          data-testid="market-multi-select-toggle"
+          @click="onUpdateSelectionMode(!selectionMode)"
+        >
+          <v-icon> checklist </v-icon>
+        </v-btn>
+        <AppCollectionInstallAll
+          v-if="showInstallAll"
+          :items="collectionItems"
+          content-type="resourcepacks"
+          :runtime="runtime"
+        />
+      </MarketListHeader>
+    </template>
+    <template #placeholder>
+      <MarketEmptyPlaceholder />
+    </template>
+    <template #filter>
+      <MarketFilterPanel
+        :modrinth-categories="modrinthCategories"
+        modrinth-category-filter="resourcepack"
+        :local-sort="sortBy"
+        :curseforge-category="curseforgeCategory"
+        curseforge-category-filter="texture-packs"
+        :enable-curseforge="isCurseforgeActive"
+        :enable-modrinth="isModrinthActive"
+        v-model:sort="marketSort"
+        :game-version="gameVersion"
+        :mode="source"
+        :collection="selectedCollection"
+        @update:modrinth-categories="modrinthCategories = $event"
+        @update:local-sort="sortBy = $event"
+        @update:curseforge-category="curseforgeCategory = $event"
+        @update:enable-curseforge="isCurseforgeActive = $event"
+        @update:enable-modrinth="isModrinthActive = $event"
+        @update:game-version="gameVersion = $event"
+        @update:mode="source = $event"
+        @update:collection="selectedCollection = $event"
+      >
+        <template #local>
+          <LinkSharedFolderSetting domain="resourcepacks" @changed="revalidate" />
+          <MarketUpgradePanel
+            :plans="plans"
+            v-model:upgrade-policy="upgradePolicy"
+            :refreshing="refreshing"
+            :upgrading="upgrading"
+            @check-upgrade="refresh({ skipVersion: false, policy: upgradePolicy as any })"
+            @upgrade="upgrade"
+          />
+        </template>
+      </MarketFilterPanel>
+    </template>
+    <template #item="{ item, hasUpdate, checked, selectionMode, selected, on, index }">
+      <v-list-subheader
+        v-if="typeof item === 'string'"
+        class="flex px-3"
+      >
+        {{
+          item === 'enabled'
+            ? t('resourcepack.selected')
+            : item === 'disabled'
+              ? t('resourcepack.unselected')
+              : t('modInstall.search')
+        }}
+      </v-list-subheader>
+      <ResourcePackItem
+        v-else-if="typeof item === 'object' && 'id' in item"
+        :pack="item as ResourcePackProject"
+        :dense="denseView"
+        :draggable="currentView === 'local' && !(item as ResourcePackProject).disabled"
+        :selection-mode="selectionMode"
+        :item-height="itemHeight"
+        :selected="selected"
+        :has-update="hasUpdate"
+        :checked="checked"
+        :install="onInstallProject"
+        @drop="onDrop(item as ResourcePackProject, $event)"
+        @click="on.click"
+      />
+    </template>
+    <template #content="{ selectedModrinthId, selectedItem, selectedCurseforgeId }">
+      <Hint v-if="dragover" icon="save_alt" :text="t('resourcepack.dropHint')" class="h-full" />
+      <MarketProjectDetailModrinth
+        v-else-if="selectedItem?.modrinth || selectedModrinthId"
+        :modrinth="selectedItem?.modrinth"
+        :project-id="selectedModrinthId"
+        :installed="
+          selectedItem?.installed ||
+          getInstalledModrinth(selectedItem?.modrinth?.project_id || selectedModrinthId)
+        "
+        :game-version="gameVersion"
+        :categories="modrinthCategories"
+        :all-files="files"
+        :curseforge="selectedItem?.curseforge?.id || selectedCurseforgeId"
+        collection-content-type="resourcepacks"
+        @uninstall="onUninstall"
+        @enable="onEnable"
+        @disable="onDisable"
+        @category="toggleCategory"
+      />
+      <MarketProjectDetailCurseforge
+        v-else-if="selectedItem?.curseforge || selectedCurseforgeId"
+        :curseforge="selectedItem?.curseforge"
+        :curseforge-id="Number(selectedItem?.curseforge?.id || selectedCurseforgeId)"
+        :installed="
+          selectedItem?.installed ||
+          getInstalledCurseforge(Number(selectedItem?.curseforge?.id || selectedCurseforgeId))
+        "
+        :game-version="gameVersion"
+        :category="curseforgeCategory"
+        :all-files="files"
+        :modrinth="selectedItem?.modrinth?.project_id || selectedModrinthId"
+        collection-content-type="resourcepacks"
+        @uninstall="onUninstall"
+        @enable="onEnable"
+        @disable="onDisable"
+        @category="curseforgeCategory = $event"
+      />
+      <ResourcePackDetailResource
+        v-else-if="isLocalFile(selectedItem)"
+        :resource-pack="selectedItem"
+        :installed="selectedItem.installed"
+        :runtime="runtime"
+      />
+    </template>
+    <SimpleDialog :title="t('resourcepack.delete.title')">
+      {{ t('resourcepack.delete.content') }}
+    </SimpleDialog>
+  </MarketBase>
+</template>
+
+<script lang="ts" setup>
+import Hint from '@/components/Hint.vue'
+import MarketBase from '@/components/MarketBase.vue'
+import MarketFilterPanel from '@/components/MarketFilterPanel.vue'
+import MarketListHeader from '@/components/MarketListHeader.vue'
+import MarketUpgradePanel from '@/components/MarketUpgradePanel.vue'
+import LinkSharedFolderSetting from '@/components/LinkSharedFolderSetting.vue'
+import MarketEmptyPlaceholder from '@/components/MarketEmptyPlaceholder.vue'
+import MarketProjectDetailCurseforge from '@/components/MarketProjectDetailCurseforge.vue'
+import MarketProjectDetailModrinth from '@/components/MarketProjectDetailModrinth.vue'
+import AppCollectionInstallAll from '@/components/AppCollectionInstallAll.vue'
+import SimpleDialog from '@/components/SimpleDialog.vue'
+import { useService } from '@/composables'
+import { useLocalStorage } from '@vueuse/core'
+import { kCurseforgeInstaller, useCurseforgeInstaller } from '@/composables/curseforgeInstaller'
+import { getDropFilePaths, useGlobalDrop } from '@/composables/dropHandler'
+import { kInstance } from '@/composables/instance'
+import { InstanceResourcePack, kInstanceResourcePacks } from '@/composables/instanceResourcePack'
+import { kModrinthInstaller, useModrinthInstaller } from '@/composables/modrinthInstaller'
+import { usePresence } from '@/composables/presence'
+import { useProjectInstall } from '@/composables/projectInstall'
+import { ResourcePackProject, kResourcePackSearch } from '@/composables/resourcePackSearch'
+import { kCompact } from '@/composables/scrollTop'
+import { useToggleCategories } from '@/composables/toggleCategories'
+import { injection } from '@/util/inject'
+import { ProjectEntry, ProjectFile } from '@/util/search'
+import { InstanceResourcePacksServiceKey } from '@xmcl/runtime-api'
+import ResourcePackDetailResource from './ResourcePackDetailResource.vue'
+import ResourcePackItem from './ResourcePackItem.vue'
+import { kSearchModel } from '@/composables/search'
+import { sort } from '@/composables/sortBy'
+
+import { useModUpgrade } from '@/composables/modUpgrade'
+
+const { runtime, path } = injection(kInstance)
+const { files, enabled, enable, disable, insert, revalidate } = injection(kInstanceResourcePacks)
+const { keyword, curseforgeCategory, modrinthCategories, currentView, gameVersion, isCurseforgeActive, isModrinthActive, sort: marketSort, source, selectedCollection } =
+  injection(kSearchModel)
+
+const { refresh, refreshing, upgrade, plans, upgradePolicy, upgrading } = useModUpgrade(
+  path,
+  runtime,
+  files,
+  revalidate,
+  'resourcepacks',
+)
+
+const {
+  error,
+  loading,
+  loadMore,
+  items: originalItems,
+  collectionItems,
+  effect,
+  sortBy,
+} = injection(kResourcePackSearch)
+
+// Install-all works for any collection open in the Favorites view (local or
+// Modrinth collections/follows).
+const showInstallAll = computed(() => source.value === 'favorite')
+
+// Register the resource pack search effect
+effect()
+
+const isLocalFile = (f: any): f is ProjectEntry<InstanceResourcePack> => !!f
+
+const items = computed(() => {
+  const result: (string | ProjectEntry)[] = []
+
+  if (currentView.value === 'local') {
+    const { enabled, disabled, others } = originalItems.value.reduce(
+      (arrays, item) => {
+        if (item.installed && item.installed.length > 0) {
+          if (item.disabled) {
+            arrays.disabled.push(item)
+          } else {
+            arrays.enabled.push(item)
+          }
+        } else {
+          arrays.others.push(item)
+        }
+        return arrays
+      },
+      {
+        enabled: [] as ProjectEntry[],
+        disabled: [] as ProjectEntry[],
+        others: [] as ProjectEntry[],
+      },
+    )
+    if (enabled.length > 0) {
+      result.push('enabled' as string)
+      result.push(...enabled)
+    }
+    if (disabled.length > 0) {
+      result.push('disabled' as string)
+      sort(sortBy.value, disabled)
+      result.push(...disabled)
+    }
+    if (others.length > 0) {
+      result.push('search' as string)
+      result.push(...others)
+    }
+  } else if (currentView.value === 'remote') {
+    result.push('search' as string)
+    result.push(...originalItems.value)
+  } else {
+    result.push(...originalItems.value)
+  }
+  return result
+})
+
+// Enable disable install uninstall
+const onUninstall = (v: ProjectFile[]) => {
+  const packs = v as InstanceResourcePack[]
+  disable(packs)
+  uninstall({ path: path.value, files: packs.map((p) => p.path) })
+}
+const onEnable = (f: ProjectFile) => {
+  enable([f as InstanceResourcePack])
+  install({ path: path.value, files: [f.path] })
+}
+const onDisable = (f: ProjectFile) => {
+  disable([f as InstanceResourcePack])
+}
+const onDrop = (item: ResourcePackProject, id: string) => {
+  const target = enabled.value.findIndex(pack => pack.id === item.id)
+  const from = enabled.value.findIndex(pack => pack.id === id)
+  if (target !== -1 && from !== -1) {
+    insert(from, target)
+  }
+}
+
+const onLoad = loadMore
+
+const toggleCategory = useToggleCategories(modrinthCategories)
+
+// Reset all filter
+onUnmounted(() => {
+  keyword.value = ''
+  modrinthCategories.value = []
+  curseforgeCategory.value = undefined
+})
+
+// Presence
+const { t } = useI18n()
+const { name } = injection(kInstance)
+usePresence(computed(() => t('presence.resourcePack', { instance: name.value })))
+
+// Page compact
+const compact = injection(kCompact)
+onMounted(() => {
+  compact.value = true
+})
+
+const { resolveFromMarket, uninstall, install } = useService(InstanceResourcePacksServiceKey)
+
+// Drop
+const { dragover } = useGlobalDrop({
+  onDrop: async (t) => {
+    const paths = getDropFilePaths(t.files)
+    if (paths.length > 0) {
+      const installed = await install({ path: path.value, files: paths })
+      await enable(installed)
+    }
+  },
+})
+
+// modrinth installer
+const modrinthInstaller = useModrinthInstaller(path, runtime, files, resolveFromMarket)
+provide(kModrinthInstaller, modrinthInstaller)
+
+// curseforge installer
+const curseforgeInstaller = useCurseforgeInstaller(
+  path,
+  runtime,
+  files,
+  resolveFromMarket,
+)
+provide(kCurseforgeInstaller, curseforgeInstaller)
+
+const selections = ref({} as Record<string, boolean>)
+provide('selections', selections)
+
+const selectionMode = ref(false)
+function onUpdateSelectionMode(v: boolean) {
+  selectionMode.value = v
+  if (!v) selections.value = {}
+}
+watch(currentView, (view) => {
+  if (view !== 'local') onUpdateSelectionMode(false)
+})
+
+const onInstallProject = useProjectInstall(
+  runtime,
+  ref(undefined),
+  curseforgeInstaller,
+  modrinthInstaller,
+  (f) => {
+    install({ path: path.value, files: [f.path] })
+    enable([f.path])
+  },
+)
+
+const getInstalledModrinth = (projectId: string) => {
+  return files.value.filter((m) => m.modrinth?.projectId === projectId)
+}
+const getInstalledCurseforge = (modId: number | undefined) => {
+  return files.value.filter((m) => m.curseforge?.projectId === modId)
+}
+
+// dense
+const denseView = useLocalStorage('resource-pack-dense-view', false, { writeDefaults: false })
+const itemHeight = computed(() => (denseView.value ? 48 : 96))
+</script>
+
+<style scoped>
+.resource-pack-page {
+  @apply flex flex-col h-full grid grid-cols-2 lg:(gap-8 px-8) px-4 gap-3 pb-4 relative overflow-x-hidden overflow-y-auto;
+}
+
+.list-title {
+  @apply w-full sticky top-0 z-10 flex-shrink-0 pl-0;
+  text-transform: uppercase;
+  text-indent: 0.0892857143em;
+  letter-spacing: 0.0892857143em;
+}
+
+.list {
+  @apply h-full overflow-y-auto flex flex-col;
+}
+
+.transition-list {
+  @apply overflow-auto flex flex-col gap-1.5 p-1;
+}
+</style>
