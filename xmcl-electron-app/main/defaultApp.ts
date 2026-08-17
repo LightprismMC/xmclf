@@ -1,11 +1,12 @@
 import defaultUrl from '@renderer/index.html'
 import { InstalledAppManifest } from '@xmcl/runtime-api'
+import { LAUNCHER_DISPLAY_NAME } from '@xmcl/runtime/constant'
 import { platform } from 'os'
 import { darkIco, darkIcon, darkTray, lightIco, lightIcon, lightTray } from './utils/icons'
 import { HAS_DEV_SERVER, HOST } from './constant'
 
 const manifest: InstalledAppManifest = {
-  name: 'KeyStone Launcher',
+  name: LAUNCHER_DISPLAY_NAME,
   description: 'The default launcher UI',
   url: HAS_DEV_SERVER ? defaultUrl : `http://${HOST}/index.html`,
   backgroundColor: '0x424242',

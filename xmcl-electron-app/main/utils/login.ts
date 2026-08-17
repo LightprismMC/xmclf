@@ -1,3 +1,5 @@
+import { LAUNCHER_DISPLAY_NAME } from '@xmcl/runtime/constant'
+
 export function getLoginSuccessHTML(title: string) {
   return `<!DOCTYPE html>
   <html lang="en">
@@ -198,7 +200,7 @@ export function getLoginSuccessHTML(title: string) {
   </head>
   <body>
     <main class="message">
-      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>X Minecraft Launcher</div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span>${LAUNCHER_DISPLAY_NAME}</div>
       <div class="content">
         <div class="success-icon" aria-hidden="true"></div>
         <h1>${title}</h1>

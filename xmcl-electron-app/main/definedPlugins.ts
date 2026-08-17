@@ -1,4 +1,3 @@
-import { pluginAutoUpdate } from './pluginAutoUpdate'
 import { pluginAgentDocuments } from './pluginAgentDocuments'
 import { pluginIconProtocol } from './pluginIconProtocol'
 import { pluginDiscreteGPULinux } from './pluginDiscreteGPULinux'
@@ -53,7 +52,6 @@ export const definedPlugins: LauncherAppPlugin[] = [
   pluginAgentProtocol,
   pluginCommandHost({ services: definedServices }),
   pluginCli,
-  pluginAutoUpdate,
   pluginPowerMonitor,
   pluginIconProtocol,
   pluginApiFallback,

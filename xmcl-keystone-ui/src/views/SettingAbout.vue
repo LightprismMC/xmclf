@@ -7,20 +7,33 @@
         <div class="d-flex align-center flex-wrap gap-4 mb-6">
           <v-img
             :src="logo"
-            alt="XMCL Logo"
+            alt="XMCLF Logo"
             width="64"
             height="64"
             class="mr-4 rounded-lg flex-grow-0 flex-shrink-0"
           ></v-img>
           <div>
-            <a
-              class="text-h5 font-weight-bold text-decoration-none"
-              href="https://www.xmcl.app"
-              target="_blank"
-              v-shared-tooltip="() => 'X Minecraft Launcher'"
+            <div
+              class="text-h5 font-weight-bold"
+              v-shared-tooltip="() => 'X Minecraft Launcher Freedoom'"
             >
-              X Minecraft Launcher
-            </a>
+              XMCLF
+            </div>
+            <div class="text-caption opacity-80">
+              X Minecraft Launcher Freedoom
+            </div>
+            <!-- A fork stays honest about what it is built on, and the sponsor
+                 links below belong to that upstream author, not to XMCLF. -->
+            <div class="text-caption opacity-70 mt-1">
+              {{ t('setting.aboutFork') }}
+              <a
+                href="https://www.xmcl.app"
+                target="_blank"
+                class="text-decoration-none"
+              >
+                X Minecraft Launcher
+              </a>
+            </div>
             <div class="d-flex items-center gap-2 mt-2">
               <a
                 href="https://afdian.com/a/ci010"
@@ -216,7 +229,7 @@ import { injection } from '@/util/inject'
 import useSWRV from 'swrv'
 import { useId } from 'vue'
 import kofi from '../assets/kofi.webp'
-import logo from '../assets/logo.webp'
+import logo from '../assets/logo.png'
 
 const env = injection(kEnvironment)
 const flights = injection(kFlights)

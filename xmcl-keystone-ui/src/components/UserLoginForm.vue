@@ -102,6 +102,27 @@
       @keypress.enter="onLogin"
     />
 
+    <v-text-field
+      v-if="requiresTwoFactor && !isOffline"
+      v-model="data.twoFactorCode"
+      data-testid="login-two-factor"
+      class="flex-grow-0"
+      prepend-inner-icon="pin"
+      variant="outlined"
+      density="comfortable"
+      rounded="lg"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      autofocus
+      :label="t('login.twoFactorCode')"
+      :hint="t('login.twoFactorHint')"
+      persistent-hint
+      :error="!!errorMessage"
+      hide-details="auto"
+      @update:model-value="error = undefined"
+      @keypress.enter="onLogin"
+    />
+
     <v-alert
       v-if="errorMessage"
       density="compact"
@@ -284,6 +305,7 @@ const data = reactive({
   username: '',
   password: '',
   uuid: '',
+  twoFactorCode: '',
   useDeviceCode: false,
   useFast: false,
   verificationUri: '',
@@ -403,6 +425,11 @@ const errorMessage = computed(() => {
   if (exception) {
     if (exception.type === 'loginInvalidCredentials') {
       return t('loginError.invalidCredentials')
+    }
+    if (exception.type === 'loginRequiresTwoFactor') {
+      return exception.codeRejected
+        ? t('loginError.twoFactorCodeInvalid')
+        : t('loginError.twoFactorRequired')
     }
     if (exception.type === 'loginInternetNotConnected') {
       return t('loginError.badNetworkOrServer')
@@ -539,12 +566,28 @@ const { refresh: onLogin, error } = useRefreshable(async () => {
     properties: {
       mode: data.useDeviceCode ? 'device' : '',
       uuid: data.uuid,
+      twoFactorCode: data.twoFactorCode,
     },
   }).finally(() => {
     isLogining.value = false
   })
   select(profile.id)
   emit('login', profile)
+})
+
+// Two-factor code. Yggdrasil services such as Ely.by only reveal that an
+// account is protected once the password has been sent, so the field appears
+// after that first attempt and stays visible while the user retries -- it must
+// not vanish the moment the error is cleared on the next keystroke.
+const requiresTwoFactor = ref(false)
+watch(error, (e) => {
+  if (getUserException(e)?.type === 'loginRequiresTwoFactor') {
+    requiresTwoFactor.value = true
+  }
+})
+watch([authority, () => data.username], () => {
+  requiresTwoFactor.value = false
+  data.twoFactorCode = ''
 })
 
 const isMicrosoftAuthError = computed(() => {

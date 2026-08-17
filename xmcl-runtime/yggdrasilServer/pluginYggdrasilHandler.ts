@@ -4,6 +4,7 @@ import { sign } from 'crypto'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
 import { LauncherAppPlugin } from '~/app'
+import { LAUNCHER_DISPLAY_NAME } from '~/constant'
 import { kPeerFacade } from '~/peer'
 import { UserService } from '~/user'
 
@@ -85,9 +86,9 @@ export const pluginYggdrasilHandler: LauncherAppPlugin = (app) => {
         response.status = 200
         response.body = JSON.stringify({
           meta: {
-            implementationName: 'xmcl-offline-server',
+            implementationName: 'xmclf-offline-server',
             implementationVersion: '0.0.1',
-            serverName: 'X Minecraft Launcher Offline Server',
+            serverName: `${LAUNCHER_DISPLAY_NAME} Offline Server`,
           },
           skinDomains: [
             'localhost',

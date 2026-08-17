@@ -1,10 +1,10 @@
 {
-    "name": "xmcl",
+    "name": "xmclf",
     "private": true,
     "main": "./index.js",
     "version": "0.66.2",
     "author": "ci010 <cijhn@hotmail.com>",
-    "description": "X Minecraft Launcher - A modern Minecraft launcher",
+    "description": "XMCLF (X Minecraft Launcher Freedoom) - a modern Minecraft launcher",
     "license": "MIT",
     "engines": {
         "node": ">=22.16.0"

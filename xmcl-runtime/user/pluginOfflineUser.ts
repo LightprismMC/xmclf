@@ -92,8 +92,7 @@ export const pluginOffineUser: LauncherAppPlugin = async (app) => {
       return p
     },
     async refresh(p) { return p },
-    getSupporetedAuthorityMetadata: function (allowThirdparty: boolean): AuthorityMetadata[] {
-      if (!allowThirdparty) return []
+    getSupporetedAuthorityMetadata: function (): AuthorityMetadata[] {
       return [
         {
           authority: AUTHORITY_DEV,

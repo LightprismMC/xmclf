@@ -90,12 +90,13 @@
             :title="t('setting.about')"
             icon="info"
           />
-          <SettingUpdate class="mb-4" />
+          <!-- SettingUpdate / SettingUpdateInfoDialog are left out: XMCLF ships
+               with auto update disabled, so an update panel would only ever
+               report "up to date". See xmcl-electron-app/main/utils/disabledUpdater.ts. -->
           <SettingAbout />
         </section>
       </div>
 
-      <SettingUpdateInfoDialog />
       <SettingMigrationDialog />
     </div>
   </div>
@@ -104,8 +105,6 @@
 <script lang="ts" setup>
 import { ref, computed, nextTick, onMounted, onUnmounted, provide, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import SettingUpdateInfoDialog from './SettingUpdateInfoDialog.vue'
-import SettingUpdate from './SettingUpdate.vue'
 import SettingGeneral from './SettingGeneral.vue'
 import SettingMigrationDialog from './SettingMigrationDialog.vue'
 import SettingGlobal from './SettingGlobal.vue'

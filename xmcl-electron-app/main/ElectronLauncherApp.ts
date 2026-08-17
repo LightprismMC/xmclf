@@ -15,7 +15,7 @@ import defaultApp from './defaultApp'
 import { definedPlugins } from './definedPlugins'
 import { isReplayableFetchBody, splitFetchBody } from './fetchBody'
 import { getOzonePlatform } from './ozonePlatform'
-import { ElectronUpdater } from './utils/updater'
+import { DisabledUpdater } from './utils/disabledUpdater'
 import { getWindowsUtils } from './utils/windowsUtils'
 
 class ElectronShell implements Shell {
@@ -170,7 +170,7 @@ export default class ElectronLauncherApp extends LauncherApp {
       new ElectronShell(),
       new ElectronSecretStorage(join(app.getPath('appData'), LAUNCHER_NAME, IS_DEV ? 'secret-dev' : 'secret')),
       (app) => new ElectronController(app as ElectronLauncherApp),
-      (app) => new ElectronUpdater(app as ElectronLauncherApp),
+      () => new DisabledUpdater(),
       defaultApp,
       getEnv(),
       definedPlugins,

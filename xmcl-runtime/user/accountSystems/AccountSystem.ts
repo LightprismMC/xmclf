@@ -14,5 +14,5 @@ export interface UserAccountSystem {
    */
   setSkin(userProfile: UserProfile, gameProfile: GameProfileAndTexture, payload: SkinPayload, signal: AbortSignal): Promise<UserProfile>
 
-  getSupporetedAuthorityMetadata(allowThirdparty: boolean): AuthorityMetadata[]
+  getSupporetedAuthorityMetadata(): AuthorityMetadata[]
 }

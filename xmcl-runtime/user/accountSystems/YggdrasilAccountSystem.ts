@@ -11,6 +11,21 @@ import { UserAccountSystem } from './AccountSystem'
 import { YggdrasilSeriveRegistry } from '../YggdrasilSeriveRegistry'
 import { YggdrasilOCIDAuthClient } from './YggdrasilOCIDAuthClient'
 
+/**
+ * Yggdrasil has no dedicated status for "this account needs a one-time code",
+ * so services signal it through the text of a `ForbiddenOperationException`.
+ * Ely.by answers `Account protected with two factor auth.` when no code was
+ * sent and mentions the 2FA code again when the one it got was wrong; match on
+ * the wording rather than an exact string so a reworded message or another
+ * authlib-injector service still lands in the two-factor flow.
+ */
+export function isTwoFactorError(e: any): boolean {
+  if (e?.error !== 'ForbiddenOperationException') return false
+  const message = typeof e.errorMessage === 'string' ? e.errorMessage : e?.message
+  if (typeof message !== 'string') return false
+  return /two[\s-]?factor|2fa|one[\s-]?time (?:code|password)|totp/i.test(message)
+}
+
 export const kYggdrasilAccountSystem = Symbol('YggdrasilAccountSystem')
 export class YggdrasilAccountSystem implements UserAccountSystem {
   constructor(
@@ -123,10 +138,18 @@ export class YggdrasilAccountSystem implements UserAccountSystem {
     const client = this.getClient(authority)
     if (!client) throw new UserException({ type: 'loginServiceNotSupported', authority }, `Service ${authority} is not supported`)
 
+    // Yggdrasil has no field for a one-time code, so services that support
+    // two-factor auth (Ely.by among them) expect it appended to the password
+    // as `<password>:<code>`. The UI collects the code separately and hands it
+    // over here, so a password that happens to contain a colon is never
+    // mistaken for a code.
+    const twoFactorCode = properties?.twoFactorCode?.trim()
+    const credential = twoFactorCode ? `${password ?? ''}:${twoFactorCode}` : password ?? ''
+
     try {
       const auth = await client.login({
         username,
-        password: password ?? '',
+        password: credential,
         requestUser: true,
         clientToken: this.clientToken,
       }, signal)
@@ -148,6 +171,12 @@ export class YggdrasilAccountSystem implements UserAccountSystem {
     } catch (e: any) {
       if (e.message && e.message.startsWith('getaddrinfo ENOTFOUND')) {
         throw new UserException({ type: 'loginInternetNotConnected' }, e.message || e.errorMessage, { cause: e })
+      } else if (isTwoFactorError(e)) {
+        throw new UserException(
+          { type: 'loginRequiresTwoFactor', codeRejected: !!twoFactorCode },
+          e.message || e.errorMessage,
+          { cause: e },
+        )
       } else if (e.error === 'ForbiddenOperationException' &&
         e.errorMessage === 'Invalid credentials. Invalid username or password.') {
         throw new UserException({ type: 'loginInvalidCredentials' }, e.message || e.errorMessage, { cause: e })

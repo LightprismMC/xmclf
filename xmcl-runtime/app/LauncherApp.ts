@@ -8,7 +8,7 @@ import { Readable } from 'stream'
 import { pipeline } from 'stream/promises'
 import { setTimeout } from 'timers/promises'
 import { Logger } from '~/infra'
-import { IS_DEV, LAUNCHER_NAME } from '../constant'
+import { INTERNAL_PROTOCOL, IS_DEV, LAUNCHER_NAME, LAUNCHER_PROTOCOL } from '../constant'
 import { isSystemError } from '@xmcl/utils'
 import { handleMigrateRoot } from './migrate'
 import { listen } from '../util/server'
@@ -313,14 +313,13 @@ export class LauncherApp extends EventEmitter {
 
     this.logger.log(`Boot from ${this.appDataPath}`)
 
-    // register xmcl protocol
-    if (!this.host.isDefaultProtocolClient('xmcl')) {
-      const result = this.host.setAsDefaultProtocolClient('xmcl')
-      if (result) {
-        this.logger.log('Successfully register the xmcl protocol')
-      } else {
-        this.logger.log('Fail to register the xmcl protocol')
-      }
+    // Register the launcher's own scheme plus the internal one, so links that
+    // already exist in the wild as `xmcl://` still open this launcher when
+    // upstream XMCL is not installed alongside it.
+    for (const scheme of new Set([LAUNCHER_PROTOCOL, INTERNAL_PROTOCOL])) {
+      if (this.host.isDefaultProtocolClient(scheme)) continue
+      const result = this.host.setAsDefaultProtocolClient(scheme)
+      this.logger.log(`${result ? 'Successfully register' : 'Fail to register'} the ${scheme} protocol`)
     }
 
     await ensureDir(this.appDataPath)
@@ -388,14 +387,15 @@ export class LauncherApp extends EventEmitter {
           }
         }
         this.logger.log('Didn\'t find --url options')
-        const protocolOption = process.argv.find(a => a.startsWith('xmcl://'))
+        const protocolOption = process.argv.find(a =>
+          a.startsWith(`${LAUNCHER_PROTOCOL}://`) || a.startsWith(`${INTERNAL_PROTOCOL}://`))
         if (protocolOption) {
           const u = new URL(protocolOption)
           if (u.host === 'launcher' && u.pathname === '/app' && u.searchParams.has('url')) {
             return u.searchParams.get('url') as string
           }
         }
-        this.logger.log('Didn\'t find xmcl:// protocol')
+        this.logger.log(`Didn't find ${LAUNCHER_PROTOCOL}:// protocol`)
       }
     }
     this.logger.log('Didn\'t find the start up url, try to load from config file.')

@@ -11,7 +11,6 @@ import createPrintPlugin from 'plugins/esbuild.print.plugin'
 import { createGzip } from 'zlib'
 import { pipeline } from 'stream'
 import { promisify } from 'util'
-import { buildAppInstaller } from './build/appinstaller-builder'
 import { config as electronBuilderConfig } from './build/electron-builder.config'
 import { resolveKoffiBinary } from './build/koffi'
 import esbuildConfig from './esbuild.config'
@@ -195,12 +194,10 @@ async function start() {
         await Promise.all(storeFiles.map(v => ensureFile(v[1]).then(() => copyFile(v[0], v[1]))))
       }
     },
-    async artifactBuildCompleted(context) {
-      if (!context.arch) return
-      if (context.target && context.target.name === 'appx') {
-        await buildAppInstaller(version, path.join(__dirname, './build/output/xmcl.appinstaller'), electronBuilderConfig.appx!.publisher!)
-      }
-    },
+    // No `artifactBuildCompleted`: upstream emitted an `.appinstaller` here
+    // pointing at its own Azure update feed, which would have made an installed
+    // XMCLF appx update itself into X Minecraft Launcher. Auto update is off in
+    // this fork -- see xmcl-electron-app/main/utils/disabledUpdater.ts.
   }
 
   await buildElectron(config, dir)

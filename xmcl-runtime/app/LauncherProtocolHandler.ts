@@ -1,4 +1,5 @@
 import { Readable } from 'stream'
+import { INTERNAL_PROTOCOL, LAUNCHER_PROTOCOL } from '../constant'
 
 export interface Context {
   request: Request
@@ -88,10 +89,20 @@ export class LauncherProtocolHandler {
       }
       await this.sinkHandlers[ctx.request.url.protocol.substring(0, ctx.request.url.protocol.length - 1)]?.(ctx)
     }
+    const url = typeof request.url === 'string'
+      ? new URL(request.url, `${INTERNAL_PROTOCOL}://launcher`)
+      : request.url
+    // A deep link comes in under the scheme registered with the OS, while every
+    // handler is keyed on the internal scheme. Rewrite here, at the single
+    // entry point, instead of registering each handler under both names.
+    if (url.protocol === `${LAUNCHER_PROTOCOL}:`) {
+      url.protocol = `${INTERNAL_PROTOCOL}:`
+    }
+
     const context: Context = {
       request: {
         method: request.method ?? 'GET',
-        url: typeof request.url === 'string' ? new URL(request.url, 'xmcl://launcher') : request.url,
+        url,
         headers: request.headers || {},
         body: request.body,
         signal: request.signal,

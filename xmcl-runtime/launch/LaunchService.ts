@@ -17,7 +17,7 @@ import { type EncodingWorker, kEncodingWorker } from '~/encoding'
 import { AbstractService, ExposeServiceKey } from '~/service'
 import { type UserTokenStorage, kUserTokenStorage } from '~/user'
 import { kYggdrasilSeriveRegistry } from '~/user/YggdrasilSeriveRegistry'
-import { IS_DEV } from '~/constant'
+import { IS_DEV, LAUNCHER_DISPLAY_NAME } from '~/constant'
 import { normalizeCommandLine } from './utils/cmd'
 import { isSystemError } from '@xmcl/utils'
 import { VersionService } from './VersionService'
@@ -197,7 +197,7 @@ export class LaunchService extends AbstractService implements ILaunchService {
     const minMemory: number | undefined = options.minMemory
     const maxMemory: number | undefined = options.maxMemory
 
-    const launcherName = `X Minecraft Launcher (${this.app.version})`
+    const launcherName = `${LAUNCHER_DISPLAY_NAME} (${this.app.version})`
     const javawPath = join(dirname(javaPath), process.platform === 'win32' ? 'javaw.exe' : 'javaw')
     const validJavaPath = await this.#isValidAndExeucatable(javawPath) ? javawPath : javaPath
     const prepend = normalizeCommandLine(options.prependCommand)

@@ -35,7 +35,7 @@ const OUTPUT_ROOT = resolve(REPO_ROOT, 'xmcl-electron-app/build/output')
  * runner arch and fall back to whatever exists.
  */
 function findPackagedBinary(): string {
-  const productName = 'X Minecraft Launcher'
+  const productName = 'XMCLF'
   if (process.platform === 'win32') {
     return join(OUTPUT_ROOT, 'win-unpacked', `${productName}.exe`)
   }
@@ -49,7 +49,7 @@ function findPackagedBinary(): string {
     }
     return join(OUTPUT_ROOT, archDirs[0], `${productName}.app`, 'Contents', 'MacOS', productName)
   }
-  return join(OUTPUT_ROOT, 'linux-unpacked', 'xmcl')
+  return join(OUTPUT_ROOT, 'linux-unpacked', 'xmclf')
 }
 
 export interface PackagedFixture {
@@ -77,7 +77,7 @@ export const test = base.extend<{ packaged: PackagedFixture }>({
     await mkdir(appDataPath, { recursive: true })
     await mkdir(gameDataPath, { recursive: true })
     // Skip the first-launch wizard: point the launcher root at our temp dir.
-    const xmclDir = join(appDataPath, 'xmcl')
+    const xmclDir = join(appDataPath, 'xmclf')
     await mkdir(xmclDir, { recursive: true })
     await writeFile(join(xmclDir, 'root'), gameDataPath)
 

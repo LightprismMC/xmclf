@@ -253,6 +253,19 @@ export const UserServiceKey: ServiceKey<UserService> = 'UserService'
 export type UserExceptions = {
   type: 'loginInternetNotConnected' | 'loginInvalidCredentials' | 'loginGeneral' | 'loginTimeout' | 'loginReset'
 } | {
+  /**
+   * The account has two-factor auth enabled and the one-time code is missing
+   * or wrong. Yggdrasil services carry the code in the password field as
+   * `<password>:<code>` (Ely.by documents this as the TOTP login form), so the
+   * UI reacts by asking for the code and retrying the same credentials.
+   */
+  type: 'loginRequiresTwoFactor'
+  /**
+   * `true` when a code was already supplied and rejected, which lets the UI
+   * tell "enter your code" apart from "that code was wrong".
+   */
+  codeRejected: boolean
+} | {
   type: 'userAcquireMicrosoftTokenFailed'
   /** The user closed the Windows native-broker account picker. */
   reason?: 'USER_CANCELED' | 'NETWORK_ERROR'

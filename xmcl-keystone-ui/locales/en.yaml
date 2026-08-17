@@ -831,6 +831,8 @@ login:
   manualLoginUrl: If the browser doesn't show up, please click this link to auth!
   signup: Sign up
   signupDescription: New to us?
+  twoFactorCode: Two-factor code
+  twoFactorHint: The 6-digit code from your authenticator app
   userRelogin: User access token is expired. Please re-login!
 loginError:
   acquireMicrosoftTokenFailed: >-
@@ -905,6 +907,12 @@ loginError:
   requirePassword: Password is required
   requireUsername: Username is required
   timeout: Login timeout. Please retry or check your network.
+  twoFactorCodeInvalid: >-
+    That two-factor code was not accepted. Codes expire quickly -- enter the
+    current one from your authenticator app and try again.
+  twoFactorRequired: >-
+    This account is protected by two-factor authentication. Enter the code from
+    your authenticator app to continue.
 logsCrashes:
   crashes: Crash Reports
   failures: Launch Failures
@@ -1890,6 +1898,7 @@ setting:
   aboutDenoDescription: >-
     XMCL leverages Deno Deploy's hassle-free platform for serverless JavaScript
     applications
+  aboutFork: A fork of
   aboutLicense: MIT LICENSE
   aboutLicenseInfo: >-
     Free code signing on Windows provided by SignPath.io, certificate by
@@ -2285,8 +2294,8 @@ theme:
   selectImage: Select Image
   selectMusic: Select Music
   selectVideo: Select Video
-  title: X Minecraft Launcher
-title: X Minecraft Launcher
+  title: XMCLF
+title: XMCLF
 transportType:
   host: Host Candidate
   prflx: Peer Reflexive Candidate
@@ -2512,6 +2521,6 @@ gamepad:
   steamAddedNotify: Launcher added to Steam Library successfully! Please restart Steam to see it.
   steamAlreadyAddedNotify: Launcher is already in your Steam Library.
   steamDeckTitle: Steam Deck Detected
-  steamDeckDesc: We detected that you are running on Steam Deck. Would you like to add X Minecraft Launcher to your Steam Library as a non-Steam game for full Steam overlay and controller integration in Gaming Mode?
+  steamDeckDesc: We detected that you are running on Steam Deck. Would you like to add XMCLF to your Steam Library as a non-Steam game for full Steam overlay and controller integration in Gaming Mode?
   steamDeckAddBtn: Add to Steam ({btn})
   steamDeckCancelBtn: Cancel ({btn})

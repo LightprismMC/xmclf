@@ -189,7 +189,7 @@ export const test = base.extend<{
     // We write directly into the e2e-controlled appData parent so a fresh
     // run skips the bootstrap dialog. To trigger bootstrap, leave it absent.
     if (!launcherOptions.bootstrap) {
-      const xmclDir = join(appDataPath, 'xmcl')
+      const xmclDir = join(appDataPath, 'xmclf')
       await mkdir(xmclDir, { recursive: true })
       await writeFile(join(xmclDir, 'root'), gameDataPath)
     }

@@ -140,7 +140,7 @@ export class UserService extends StatefulService<UserState> implements IUserServ
   }
 
   async getSupportedAuthorityMetadata(): Promise<AuthorityMetadata[]> {
-    const result = Object.values(this.accountSystems).concat(this.yggdrasilAccountSystem).map(s => s.getSupporetedAuthorityMetadata(true))
+    const result = Object.values(this.accountSystems).concat(this.yggdrasilAccountSystem).map(s => s.getSupporetedAuthorityMetadata())
       .flat()
     return result
   }

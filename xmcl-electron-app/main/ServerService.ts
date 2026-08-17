@@ -11,6 +11,7 @@ import {
   type ServerServiceTarget,
 } from '@xmcl/runtime-api'
 import { Inject, LauncherAppKey, type LauncherApp } from '@xmcl/runtime/app'
+import { LAUNCHER_DISPLAY_NAME } from '@xmcl/runtime/constant'
 import { LaunchService } from '@xmcl/runtime/launch'
 import { RemoteServerService } from '@xmcl/runtime/remoteServer'
 import { AbstractService, ExposeServiceKey } from '@xmcl/runtime/service'
@@ -187,8 +188,8 @@ export class ServerService extends AbstractService implements IServerService {
       const config = [
         '<service>',
         `  <id>${escapeXml(options.name)}</id>`,
-        `  <name>${escapeXml(`XMCL Minecraft Server - ${options.name}`)}</name>`,
-        '  <description>Minecraft dedicated server managed by X Minecraft Launcher.</description>',
+        `  <name>${escapeXml(`${LAUNCHER_DISPLAY_NAME} Minecraft Server - ${options.name}`)}</name>`,
+        `  <description>${escapeXml(`Minecraft dedicated server managed by ${LAUNCHER_DISPLAY_NAME}.`)}</description>`,
         `  <executable>${escapeXml(launchOptions.java)}</executable>`,
         `  <arguments>${escapeXml(args.map(quoteWindowsArgument).join(' '))}</arguments>`,
         `  <workingdirectory>${escapeXml(serverDirectory)}</workingdirectory>`,

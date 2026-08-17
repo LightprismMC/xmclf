@@ -25,7 +25,7 @@ import { type Tasks, kTasks } from '~/infra'
 import { validateDirectory } from '~/util/validate'
 import { writeZipFile } from '../util/zip'
 import { LauncherApp } from '../app/LauncherApp'
-import { HAS_DEV_SERVER } from '../constant'
+import { HAS_DEV_SERVER, LAUNCHER_DISPLAY_NAME } from '../constant'
 import { ZipFile } from 'yazl'
 import { getTracker } from '~/util/taskHelper'
 import { addSteamShortcutToVdf } from './steamShortcut'
@@ -96,7 +96,7 @@ export class BaseService extends AbstractService implements IBaseService {
   async makeDesktopShortcut() {
     const desktopDir = this.app.host.getPath('desktop')
     if (process.platform === 'win32') {
-      const shortcutPath = join(desktopDir, 'X Minecraft Launcher.lnk')
+      const shortcutPath = join(desktopDir, `${LAUNCHER_DISPLAY_NAME}.lnk`)
       return this.app.shell.createShortcut(shortcutPath, {
         target: this.app.host.getPath('exe'),
         args: process.execArgv.join(' '),

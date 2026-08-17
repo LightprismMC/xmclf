@@ -659,6 +659,8 @@ login:
     Если браузер не открывается, пожалуйста, нажмите на эту ссылку для авторизации!
   signup: Зарегистрироваться
   signupDescription: Нет учётной записи?
+  twoFactorCode: Код двухфакторной защиты
+  twoFactorHint: Шестизначный код из приложения-аутентификатора
   userRelogin: Срок действия токена доступа пользователя истёк. Пожалуйста, повторите вход!
 loginError:
   acquireMicrosoftTokenFailed: >-
@@ -687,6 +689,12 @@ loginError:
   requireUsername: Требуется имя пользователя
   timeout: >-
     Время ожидания входа истекло. Пожалуйста, попробуйте ещё раз или проверьте соединение с сетью.
+  twoFactorCodeInvalid: >-
+    Код двухфакторной защиты не принят. Такие коды быстро устаревают — введите
+    текущий код из приложения-аутентификатора и попробуйте ещё раз.
+  twoFactorRequired: >-
+    Учётная запись защищена двухфакторной аутентификацией. Введите код из
+    приложения-аутентификатора, чтобы продолжить.
 logsCrashes:
   crashes: Отчёты об ошибках
   logs: Журналы
@@ -1245,6 +1253,7 @@ setting:
   aboutBmclDescription: BMCL API предоставляет удобные загрузки для пользователей материка
   aboutContributors: 🧑‍💻 Участники 🧑‍💻
   aboutDenoDescription: XMCL использует серверную платформу Deno Deploy для приложений JavaScript
+  aboutFork: Форк проекта
   aboutLicense: Лицензия MIT
   aboutLicenseInfo: Благодарим SignPath.io за бесплатную подпись кода Windows
   aboutSponsors: 😇 Спонсоры 😇
@@ -1580,8 +1589,8 @@ theme:
   selectImage: Выберите изображение
   selectMusic: Выберите музыку
   selectVideo: Выберите видео
-  title: X Minecraft Launcher
-title: X Minecraft Launcher
+  title: XMCLF
+title: XMCLF
 transportType:
   host: Хост-кандидат
   prflx: Пиринг-рефлексивный кандидат

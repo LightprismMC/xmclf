@@ -32,10 +32,7 @@
         </template>
       </v-list-item>
     </template>
-    <template
-      v-if="allowAddService"
-      #append-item
-    >
+    <template #append-item>
       <v-divider />
       <v-list-item
         :title="t('userService.add')"
@@ -51,7 +48,7 @@
   </v-select>
 </template>
 <script setup lang="ts">
-import { AuthorityItem, useAllowThirdparty } from '@/composables/login'
+import { AuthorityItem } from '@/composables/login'
 import { AUTHORITY_DEV, AUTHORITY_MICROSOFT, AUTHORITY_MOJANG } from '@xmcl/runtime-api'
 
 const props = defineProps<{
@@ -80,9 +77,6 @@ function authoritySlug(value: string) {
     return `thirdparty-${value}`
   }
 }
-
-const allowThirdParty = useAllowThirdparty()
-const allowAddService = computed(() => allowThirdParty.value)
 
 const selected = computed<AuthorityItem | undefined>({
   get() { return props.items.find(a => a.value === props.modelValue) },
